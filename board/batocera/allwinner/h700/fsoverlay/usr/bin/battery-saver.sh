@@ -13,8 +13,8 @@ LOOP_COUNT=0 # This should always be 0
 JS_DEVICES=()
 
 MODE="$(/usr/bin/batocera-settings-get system.batterysavermode)"
-if [[ -z "$MODE" || ! "$MODE" =~ ^(dim|suspend|shutdown)$ ]]; then
-    MODE="dim" # default can be dim|suspend|shutdown
+if [[ -z "$MODE" || ! "$MODE" =~ ^(disable|dim|suspend|shutdown)$ ]]; then
+    MODE="dim" # default can be disable|dim|suspend|shutdown
     /usr/bin/batocera-settings-set system.batterysavermode "$MODE"
 fi
 
@@ -53,6 +53,10 @@ js_update() {
 }
 
 do_inactivity() {
+    if [ "$MODE" = "disable" ]; then
+        return
+    fi
+	
     STATE="inactive"
     case "$MODE" in
         dim)
@@ -79,6 +83,10 @@ do_inactivity() {
 }
 
 do_activity() {
+    if [ "$MODE" = "disable" ]; then
+        return
+    fi
+	
     if [ "$MODE" = "dim" ]; then
         STATE="active"
         batocera-brightness $BRIGHTNESS
